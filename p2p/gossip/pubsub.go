@@ -3,12 +3,24 @@ package gossip
 import (
 	"context"
 	"encoding/base64"
+	"errors"
+	"sync"
+
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	pubsub_pb "github.com/libp2p/go-libp2p-pubsub/pb"
 	"github.com/minio/sha256-simd"
 )
+
+var NoGossipErr = errors.New("Must start gossip-sub first. Try 'gossip start'")
+
+type GossipState struct {
+	GsNode  GossipSub
+	CloseGS context.CancelFunc
+	// string -> *pubsub.Topic
+	Topics sync.Map
+}
 
 type GossipSub interface {
 	Join(topic string, opts ...pubsub.TopicOpt) (*pubsub.Topic, error)

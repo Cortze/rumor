@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"sync"
+	"time"
+
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/protolambda/ask"
@@ -16,6 +20,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/dv5"
 	"github.com/protolambda/rumor/control/actor/enr"
 	"github.com/protolambda/rumor/control/actor/gossip"
+	"github.com/protolambda/rumor/control/actor/gossip/topic"
 	"github.com/protolambda/rumor/control/actor/host"
 	"github.com/protolambda/rumor/control/actor/peer"
 	"github.com/protolambda/rumor/control/actor/peer/metadata"
@@ -25,11 +30,9 @@ import (
 	"github.com/protolambda/rumor/control/actor/states"
 	"github.com/protolambda/rumor/control/tool"
 	"github.com/protolambda/rumor/p2p/addrutil"
+	pgossip "github.com/protolambda/rumor/p2p/gossip"
 	"github.com/protolambda/rumor/p2p/track"
 	"github.com/sirupsen/logrus"
-	"io"
-	"sync"
-	"time"
 )
 
 type GlobalActorData struct {
@@ -58,8 +61,10 @@ type Actor struct {
 
 	Dv5State dv5.Dv5State
 
-	GossipState gossip.GossipState
-	RPCState    rpc.RPCState
+	GossipState pgossip.GossipState
+	TopicState  topic.TopicState
+
+	RPCState rpc.RPCState
 
 	HostState host.HostState
 
@@ -196,7 +201,10 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 		}
 		cmd = &dv5.Dv5Cmd{Base: b, Dv5State: &c.Dv5State, Dv5Settings: settings, CurrentPeerstore: c.CurrentPeerstore}
 	case "gossip":
-		cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState}
+		cmd = &gossip.GossipCmd{Base: b,
+			GossipState: &c.GossipState,
+			TopicState:  &c.TopicState,
+		}
 	case "rpc":
 		cmd = &rpc.RpcCmd{Base: b, RPCState: &c.RPCState}
 	case "blocks":

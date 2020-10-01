@@ -2,12 +2,14 @@ package gossip
 
 import (
 	"context"
+
 	"github.com/protolambda/rumor/control/actor/base"
+	"github.com/protolambda/rumor/p2p/gossip"
 )
 
 type GossipListCmd struct {
 	*base.Base
-	*GossipState
+	*gossip.GossipState
 }
 
 func (c *GossipListCmd) Help() string {
@@ -16,7 +18,7 @@ func (c *GossipListCmd) Help() string {
 
 func (c *GossipListCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
-		return NoGossipErr
+		return gossip.NoGossipErr
 	}
 	topics := make([]string, 0)
 	c.GossipState.Topics.Range(func(key, value interface{}) bool {
