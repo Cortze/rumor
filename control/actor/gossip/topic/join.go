@@ -15,6 +15,8 @@ type TopicJoinCmd struct {
 
 	TopicName   string `ask:"--topic-name" help:"The name of the topic to join"`
 	ForkVersion string `ask:"--fork-version" help:"The fork digest value of the network we want to join to"`
+
+	Eth2TopicName string
 }
 
 func (c *TopicJoinCmd) Help() string {
@@ -31,24 +33,24 @@ func (c *TopicJoinCmd) Run(ctx context.Context, args ...string) (err error) {
 	}
 
 	// Generate the full address of the eth2 topics
-	c.TopicState.Eth2TopicName, err = gossip.Eth2TopicBuilder(c.TopicName, c.ForkVersion)
+	c.Eth2TopicName, err = gossip.Eth2TopicBuilder(c.TopicName, c.ForkVersion)
 	if err != nil {
 		return fmt.Errorf("Error while generating the Full Eth2 Topic-Name")
 	}
 
 	// Temporal code
-	fmt.Println("full address will be:", c.TopicState.Eth2TopicName)
+	fmt.Println("full address will be:", c.Eth2TopicName)
 	// --- end Temporal code ---
 
-	_, ok := c.GossipState.Topics.Load(c.TopicState.Eth2TopicName)
+	_, ok := c.GossipState.Topics.Load(c.Eth2TopicName)
 	if ok {
-		return fmt.Errorf("already on gossip topic %s", c.TopicState.Eth2TopicName)
+		return fmt.Errorf("already on gossip topic %s", c.Eth2TopicName)
 	}
-	top, err := c.GossipState.GsNode.Join(c.TopicState.Eth2TopicName)
+	top, err := c.GossipState.GsNode.Join(c.Eth2TopicName)
 	if err != nil {
 		return err
 	}
-	c.GossipState.Topics.Store(c.TopicState.Eth2TopicName, top)
-	c.Log.Infof("joined topic %s", c.TopicState.Eth2TopicName)
+	c.GossipState.Topics.Store(c.Eth2TopicName, top)
+	c.Log.Infof("joined topic %s", c.Eth2TopicName)
 	return nil
 }

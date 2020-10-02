@@ -17,8 +17,9 @@ type TopicCreateDBCmd struct {
 	TopicName   string `ask:"--topic-name" help:"The name of the topic to join"`
 	ForkVersion string `ask:"--fork-version" help:"The fork digest value of the network we want to join to"`
 
-	StoreType string `ask:"--store-type" help:"The type of datastore to use. Options: 'mem', 'leveldb', 'badger'"`
-	StorePath string `ask:"--store-path" help:"The path of the datastore, must be empty for memory store."`
+	Eth2TopicName string
+	StoreType     string `ask:"--store-type" help:"The type of datastore to use. Options: 'mem', 'leveldb', 'badger'"`
+	StorePath     string `ask:"--store-path" help:"The path of the datastore, must be empty for memory store."`
 }
 
 func (c *TopicCreateDBCmd) Default() {
@@ -32,7 +33,7 @@ func (c *TopicCreateDBCmd) Help() string {
 
 func (c *TopicCreateDBCmd) Run(ctx context.Context, args ...string) error {
 
-	fmt.Println("Creating DB for the topic:", c.TopicState.Eth2TopicName)
+	fmt.Println("Creating DB for the topic:", c.Eth2TopicName)
 	// TODO:
 	// - Check if a db exits on the same topic
 	// - if not generate one

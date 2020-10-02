@@ -7,7 +7,7 @@ import (
 )
 
 type TopicState struct {
-	Eth2TopicName string
+	
 }
 
 type TopicCmd struct {

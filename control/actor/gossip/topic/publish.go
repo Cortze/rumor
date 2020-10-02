@@ -19,6 +19,8 @@ type TopicPublishCmd struct {
 	TopicName   string `ask:"--topic-name" help:"The name of the topic to join"`
 	ForkVersion string `ask:"--fork-version" help:"The fork digest value of the network we want to join to"`
 	Message     []byte `ask:"<message>" help:"The uncompressed message bytes, hex-encoded"`
+
+	Eth2TopicName string
 }
 
 func (c *TopicPublishCmd) Help() string {
@@ -35,20 +37,20 @@ func (c *TopicPublishCmd) Run(ctx context.Context, args ...string) (err error) {
 	}
 
 	// Generate the full address of the eth2 topics
-	c.TopicState.Eth2TopicName, err = gossip.Eth2TopicBuilder(c.TopicName, c.ForkVersion)
+	c.Eth2TopicName, err = gossip.Eth2TopicBuilder(c.TopicName, c.ForkVersion)
 	if err != nil {
 		return fmt.Errorf("Error while generating the Full Eth2 Topic-Name")
 	}
 
 	// Temporal code
-	fmt.Println("full address will be:", c.TopicState.Eth2TopicName)
+	fmt.Println("full address will be:", c.Eth2TopicName)
 	// --- end Temporal code ---
 
-	if top, ok := c.GossipState.Topics.Load(c.TopicState.Eth2TopicName); !ok {
-		return fmt.Errorf("not on gossip topic %s", c.TopicState.Eth2TopicName)
+	if top, ok := c.GossipState.Topics.Load(c.Eth2TopicName); !ok {
+		return fmt.Errorf("not on gossip topic %s", c.Eth2TopicName)
 	} else {
 		data := c.Message
-		if strings.HasSuffix(c.TopicState.Eth2TopicName, "_snappy") {
+		if strings.HasSuffix(c.Eth2TopicName, "_snappy") {
 			data = snappy.Encode(nil, data)
 		}
 		if err := top.(*pubsub.Topic).Publish(ctx, data); err != nil {

@@ -201,10 +201,7 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 		}
 		cmd = &dv5.Dv5Cmd{Base: b, Dv5State: &c.Dv5State, Dv5Settings: settings, CurrentPeerstore: c.CurrentPeerstore}
 	case "gossip":
-		cmd = &gossip.GossipCmd{Base: b,
-			GossipState: &c.GossipState,
-			TopicState:  &c.TopicState,
-		}
+		cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState, TopicState: &c.TopicState}
 	case "rpc":
 		cmd = &rpc.RpcCmd{Base: b, RPCState: &c.RPCState}
 	case "blocks":

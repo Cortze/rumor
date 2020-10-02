@@ -11,9 +11,6 @@ import (
 // From given topicName and forkVersion, return the string of the gossipsub topic with the propper format
 func Eth2TopicBuilder(topicName string, forkVersion string) (string, error) {
 
-	fmt.Println("Parsed topicName:", topicName)
-	fmt.Println("Parsed forkVersion:", forkVersion)
-
 	if topicName == "" || forkVersion == "" {
 		return "", fmt.Errorf("Topic Name or Fork version are empty. TopicName:", topicName, "Fork Version:", forkVersion)
 	}

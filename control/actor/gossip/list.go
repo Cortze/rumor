@@ -2,6 +2,7 @@ package gossip
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/p2p/gossip"
@@ -20,6 +21,11 @@ func (c *GossipListCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return gossip.NoGossipErr
 	}
+	// Temporal
+	fmt.Println(c.GossipState.Topics)
+	//--- end temporal ---
+
+
 	topics := make([]string, 0)
 	c.GossipState.Topics.Range(func(key, value interface{}) bool {
 		topics = append(topics, key.(string))
