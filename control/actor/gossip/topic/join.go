@@ -46,6 +46,11 @@ func (c *TopicJoinCmd) Run(ctx context.Context, args ...string) (err error) {
 	if ok {
 		return fmt.Errorf("already on gossip topic %s", c.Eth2TopicName)
 	}
+
+	// Temporal code
+	fmt.Println("Gossip.State.Topics", c.GossipState.Topics)
+	// --- end Temporal code ---
+
 	top, err := c.GossipState.GsNode.Join(c.Eth2TopicName)
 	if err != nil {
 		return err
