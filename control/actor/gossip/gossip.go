@@ -7,18 +7,14 @@ import (
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/p2p/gossip"
 	"sync"
+    "githun.com/protolambda/rumor/p2p/track"
+    "github.com/protolambda/rumor/metrics"
 )
-
-type GossipState struct {
-	GsNode  gossip.GossipSub
-	CloseGS context.CancelFunc
-	// string -> *pubsub.Topic
-	Topics sync.Map
-}
 
 type GossipCmd struct {
 	*base.Base
-	*GossipState
+	*metrics.GossipState
+    Store track.ExtendedPeerstore
 }
 
 func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
@@ -30,7 +26,7 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 	case "join":
 		cmd = &GossipJoinCmd{Base: c.Base, GossipState: c.GossipState}
 	case "events":
-		cmd = &GossipEventsCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &GossipEventsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
 	case "list-peers":
 		cmd = &GossipListPeersCmd{Base: c.Base, GossipState: c.GossipState}
 	case "blacklist":

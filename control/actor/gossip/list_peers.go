@@ -5,11 +5,12 @@ import (
 	"fmt"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/protolambda/rumor/control/actor/base"
+    "github.com/protolambda/rumor/metrics"
 )
 
 type GossipListPeersCmd struct {
 	*base.Base
-	*GossipState
+	*metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to list peers of"`
 }
 
