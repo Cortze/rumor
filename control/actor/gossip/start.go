@@ -5,11 +5,12 @@ import (
 	"errors"
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/p2p/gossip"
+    "github.com/protolambda/rumor/metrics"
 )
 
 type GossipStartCmd struct {
 	*base.Base
-	*GossipState
+	*metrics.GossipState
 }
 
 func (c *GossipStartCmd) Help() string {
