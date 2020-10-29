@@ -3,15 +3,17 @@ package gossip
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/golang/snappy"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/protolambda/rumor/control/actor/base"
-	"strings"
+	"github.com/protolambda/rumor/metrics"
 )
 
 type GossipPublishCmd struct {
 	*base.Base
-	*GossipState
+	*metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to publish to"`
 	Message   []byte `ask:"<message>" help:"The uncompressed message bytes, hex-encoded"`
 }

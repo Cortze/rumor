@@ -2,12 +2,14 @@ package gossip
 
 import (
 	"context"
+
 	"github.com/protolambda/rumor/control/actor/base"
+	"github.com/protolambda/rumor/metrics"
 )
 
 type GossipListCmd struct {
 	*base.Base
-	*GossipState
+	*metrics.GossipState
 }
 
 func (c *GossipListCmd) Help() string {
