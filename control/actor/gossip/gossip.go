@@ -1,13 +1,10 @@
 package gossip
 
 import (
-	"context"
 	"errors"
 	"github.com/protolambda/ask"
 	"github.com/protolambda/rumor/control/actor/base"
-	"github.com/protolambda/rumor/p2p/gossip"
-	"sync"
-    "githun.com/protolambda/rumor/p2p/track"
+    "github.com/protolambda/rumor/p2p/track"
     "github.com/protolambda/rumor/metrics"
 )
 
@@ -37,14 +34,16 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &GossipLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
 		cmd = &GossipPublishCmd{Base: c.Base, GossipState: c.GossipState}
-	default:
+    case "export-metrics":
+		cmd = &GossipExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
+    default:
 		return nil, ask.UnrecognizedErr
 	}
 	return cmd, nil
 }
 
 func (c *GossipCmd) Routes() []string {
-	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish"}
+	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish", "export_metrics"}
 }
 
 func (c *GossipCmd) Help() string {

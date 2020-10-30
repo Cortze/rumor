@@ -55,7 +55,9 @@ func (c *GossipLogCmd) Run(ctx context.Context, args ...string) error {
 					} else {
 						msgData = msg.Data
 					}
-					metrics.IncomingMessageManager(msg.ReceivedFrom, c.TopicName)
+					fmt.Println("New message arrived from Peer:", msg.ReceivedFrom)
+                    
+                    c.GossipState.IncomingMessageManager(msg.ReceivedFrom, c.TopicName)
                     
                     c.Log.WithFields(logrus.Fields{
 						"from":      msg.ReceivedFrom.String(),
