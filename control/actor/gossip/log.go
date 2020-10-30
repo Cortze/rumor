@@ -56,9 +56,6 @@ func (c *GossipLogCmd) Run(ctx context.Context, args ...string) error {
 						msgData = msg.Data
 					}
                     c.GossipState.IncomingMessageManager(msg.ReceivedFrom, c.TopicName)
-                    
-					metrics.IncomingMessageManager(msg.ReceivedFrom, c.TopicName)
-                    
                     c.Log.WithFields(logrus.Fields{
 						"from":      msg.ReceivedFrom.String(),
 						"data":      hex.EncodeToString(msgData),

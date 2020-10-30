@@ -6,7 +6,6 @@ import (
 	"github.com/protolambda/rumor/control/actor/base"
     "github.com/protolambda/rumor/p2p/track"
     "github.com/protolambda/rumor/metrics"
-	"sync"
 )
 
 type GossipCmd struct {
