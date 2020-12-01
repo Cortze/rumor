@@ -1,17 +1,24 @@
 package gossip
 
 import (
+	"context"
 	"errors"
 	"github.com/protolambda/ask"
 	"github.com/protolambda/rumor/control/actor/base"
-    "github.com/protolambda/rumor/p2p/track"
-    "github.com/protolambda/rumor/metrics"
+	"github.com/protolambda/rumor/p2p/gossip"
+	"sync"
 )
+
+type GossipState struct {
+	GsNode  gossip.GossipSub
+	CloseGS context.CancelFunc
+	// string -> *pubsub.Topic
+	Topics sync.Map
+}
 
 type GossipCmd struct {
 	*base.Base
-	*metrics.GossipState
-    Store track.ExtendedPeerstore
+	*GossipState
 }
 
 func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
@@ -23,7 +30,7 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 	case "join":
 		cmd = &GossipJoinCmd{Base: c.Base, GossipState: c.GossipState}
 	case "events":
-		cmd = &GossipEventsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
+		cmd = &GossipEventsCmd{Base: c.Base, GossipState: c.GossipState}
 	case "list-peers":
 		cmd = &GossipListPeersCmd{Base: c.Base, GossipState: c.GossipState}
 	case "blacklist":
@@ -34,16 +41,14 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &GossipLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
 		cmd = &GossipPublishCmd{Base: c.Base, GossipState: c.GossipState}
-    case "export-metrics":
-		cmd = &GossipExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
-    default:
+	default:
 		return nil, ask.UnrecognizedErr
 	}
 	return cmd, nil
 }
 
 func (c *GossipCmd) Routes() []string {
-	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish", "export_metrics"}
+	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish"}
 }
 
 func (c *GossipCmd) Help() string {

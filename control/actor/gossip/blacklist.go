@@ -4,12 +4,11 @@ import (
 	"context"
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/control/actor/flags"
-    "github.com/protolambda/rumor/metrics"
 )
 
 type GossipBlacklistCmd struct {
 	*base.Base
-	*metrics.GossipState
+	*GossipState
 	PeerID flags.PeerIDFlag `ask:"<peer-id>" help:"The peer to blacklist"`
 }
 
