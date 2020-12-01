@@ -9,6 +9,8 @@ import (
 	"github.com/protolambda/rumor/metrics"
 	"github.com/protolambda/rumor/p2p/track"
 	"github.com/sirupsen/logrus"
+    "github.com/protolambda/rumor/p2p/track"
+    "github.com/protolambda/rumor/metrics"
 )
 
 type GossipEventsCmd struct {
@@ -45,19 +47,12 @@ func (c *GossipEventsCmd) Run(ctx context.Context, args ...string) error {
 			}
 			switch ev.Type {
 			case pubsub.PeerJoin:
-				c.GossipState.GossipMetrics.AddNewPeer(ev.Peer.String())
-				c.GossipState.GossipMetrics.AddConnectionEvent(ev.Peer.String(), "Connection")
-				c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic joined")
-				c.GossipState.GossipMetrics.ParseDataFromPeer(c.Store, ev.Peer)
-
-				// TODO: add here the protocolVersion and Ip address
-				// 		 add also tha ping to the peer?
-
+          c.GossipState.AddNewPeer(ev.Peer, c.Store)
+          c.GossipState.AddConnectionEvent(ev.Peer, "Connection")
+          c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic joined")
 			case pubsub.PeerLeave:
-				c.GossipState.GossipMetrics.AddConnectionEvent(ev.Peer.String(), "Disconnection")
-				c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic left")
-				// TODO: add here the protocolVersion and Ip address
-				// 		 add also tha ping to the peer?
+          c.GossipState.AddConnectionEvent(ev.Peer, "Disconnection")
+				  c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic left")
 			}
 		}
 	}()

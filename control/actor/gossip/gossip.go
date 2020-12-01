@@ -35,16 +35,16 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &GossipLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
 		cmd = &GossipPublishCmd{Base: c.Base, GossipState: c.GossipState}
-	case "export-metrics":
-		cmd = &ExportMetricsCmd{Base: c.Base, GossipState: c.GossipState}
-	default:
+  case "export-metrics":
+		cmd = &GossipExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
+  default:
 		return nil, ask.UnrecognizedErr
 	}
 	return cmd, nil
 }
 
 func (c *GossipCmd) Routes() []string {
-	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish", "export-metrics"}
+	return []string{"start", "list", "join", "events", "list-peers", "blacklist", "leave", "log", "publish", "export_metrics"}
 }
 
 func (c *GossipCmd) Help() string {

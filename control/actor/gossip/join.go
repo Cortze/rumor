@@ -3,7 +3,6 @@ package gossip
 import (
 	"context"
 	"fmt"
-
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/metrics"
 )

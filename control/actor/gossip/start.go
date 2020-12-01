@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/protolambda/rumor/control/actor/base"
-	"github.com/protolambda/rumor/metrics"
-	pgossip "github.com/protolambda/rumor/p2p/gossip"
+	"github.com/protolambda/rumor/p2p/gossip"
+  "github.com/protolambda/rumor/metrics"
 )
 
 type GossipStartCmd struct {

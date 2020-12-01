@@ -5,6 +5,7 @@ import (
 
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/control/actor/flags"
+
 	"github.com/protolambda/rumor/metrics"
 )
 
