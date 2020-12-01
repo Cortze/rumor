@@ -3,11 +3,13 @@ package gossip
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/golang/snappy"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/protolambda/rumor/control/actor/base"
 	"strings"
-    "github.com/protolambda/rumor/metrics"
+  "github.com/protolambda/rumor/metrics"
 )
 
 type GossipPublishCmd struct {
