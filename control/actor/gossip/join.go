@@ -3,13 +3,12 @@ package gossip
 import (
 	"context"
 	"fmt"
-	"github.com/protolambda/rumor/metrics"
-    "github.com/protolambda/rumor/control/actor/base"
+	"github.com/protolambda/rumor/control/actor/base"
 )
 
 type GossipJoinCmd struct {
 	*base.Base
-	*metrics.GossipState
+	*GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to join"`
 }
 

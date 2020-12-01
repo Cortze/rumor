@@ -8,13 +8,12 @@ import (
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/protolambda/rumor/control/actor/base"
     "github.com/sirupsen/logrus"
-    "github.com/protolambda/rumor/metrics"
 	"strings"
 )
 
 type GossipLogCmd struct {
 	*base.Base
-	*metrics.GossipState
+	*GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to log messages of"`
 }
 
@@ -55,8 +54,7 @@ func (c *GossipLogCmd) Run(ctx context.Context, args ...string) error {
 					} else {
 						msgData = msg.Data
 					}
-                    c.GossipState.IncomingMessageManager(msg.ReceivedFrom, c.TopicName)
-                    c.Log.WithFields(logrus.Fields{
+					c.Log.WithFields(logrus.Fields{
 						"from":      msg.ReceivedFrom.String(),
 						"data":      hex.EncodeToString(msgData),
 						"signature": hex.EncodeToString(msg.Signature),
