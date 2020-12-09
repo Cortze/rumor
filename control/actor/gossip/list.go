@@ -2,8 +2,9 @@ package gossip
 
 import (
 	"context"
+
 	"github.com/protolambda/rumor/control/actor/base"
-    "github.com/protolambda/rumor/metrics"
+	"github.com/protolambda/rumor/metrics"
 )
 
 type GossipListCmd struct {

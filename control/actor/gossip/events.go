@@ -3,8 +3,11 @@ package gossip
 import (
 	"context"
 	"fmt"
+
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/protolambda/rumor/control/actor/base"
+	"github.com/protolambda/rumor/metrics"
+	"github.com/protolambda/rumor/p2p/track"
 	"github.com/sirupsen/logrus"
     "github.com/protolambda/rumor/p2p/track"
     "github.com/protolambda/rumor/metrics"
@@ -13,7 +16,7 @@ import (
 type GossipEventsCmd struct {
 	*base.Base
 	*metrics.GossipState
-    Store   track.ExtendedPeerstore
+	Store     track.ExtendedPeerstore
 	TopicName string `ask:"<topic>" help:"The name of the topic to track events of"`
 }
 
@@ -44,12 +47,12 @@ func (c *GossipEventsCmd) Run(ctx context.Context, args ...string) error {
 			}
 			switch ev.Type {
 			case pubsub.PeerJoin:
-				c.GossipState.AddNewPeer(ev.Peer, c.Store)
-                c.GossipState.AddConnectionEvent(ev.Peer, "Connection")
-                c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic joined")
+          c.GossipState.AddNewPeer(ev.Peer, c.Store)
+          c.GossipState.AddConnectionEvent(ev.Peer, "Connection")
+          c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic joined")
 			case pubsub.PeerLeave:
-                c.GossipState.AddConnectionEvent(ev.Peer, "Disconnection")
-				c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic left")
+          c.GossipState.AddConnectionEvent(ev.Peer, "Disconnection")
+				  c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": c.TopicName}).Info("topic left")
 			}
 		}
 	}()

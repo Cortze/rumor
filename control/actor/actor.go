@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"sync"
+	"time"
+
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/protolambda/ask"
@@ -24,13 +28,11 @@ import (
 	"github.com/protolambda/rumor/control/actor/rpc"
 	"github.com/protolambda/rumor/control/actor/states"
 	"github.com/protolambda/rumor/control/tool"
+	"github.com/protolambda/rumor/metrics"
 	"github.com/protolambda/rumor/p2p/addrutil"
 	"github.com/protolambda/rumor/metrics"
     "github.com/protolambda/rumor/p2p/track"
 	"github.com/sirupsen/logrus"
-	"io"
-	"sync"
-	"time"
 )
 
 type GlobalActorData struct {
@@ -197,7 +199,7 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 		}
 		cmd = &dv5.Dv5Cmd{Base: b, Dv5State: &c.Dv5State, Dv5Settings: settings, CurrentPeerstore: c.CurrentPeerstore}
 	case "gossip":
-		store := c.CurrentPeerstore
+		    store := c.CurrentPeerstore
         if !store.Initialized() {
             store = nil
         }
