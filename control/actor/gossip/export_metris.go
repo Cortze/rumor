@@ -2,7 +2,6 @@ package gossip
 
 import (
 	"context"
-    "fmt"
     "time"
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/metrics"
@@ -35,17 +34,17 @@ func (c *GossipExportMetricsCmd) Run(ctx context.Context, args ...string) error 
 	go func() {
 		for {
             if stopping {
-                fmt.Println("**************Aborting!!!!!!!!")
+                c.Log.Infof("Metrics Export Stopped")
                 return
             }
 			start := time.Now()
 
-            fmt.Println("------------->Exporting!!!!!!!!")
+            c.Log.Infof("Exporting Metrics")
 	        err := c.GossipState.ExportMetrics(c.FilePath, c.PeerstorePath, c.Store)
             if err != nil {
-                 fmt.Println("Problems exporting the Metrics to the given file path")
+                c.Log.Infof("Problems exporting the Metrics to the given file path")
             } else {
-                fmt.Println("Metrics Exported")
+                c.Log.Infof("Metrics Exported")
             }
             exportStepDuration := time.Since(start)
 			if exportStepDuration < c.ExportPeriod{

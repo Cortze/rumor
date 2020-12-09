@@ -35,7 +35,7 @@ type PeerMetrics struct {
 	Ip         string
     Country    string
     City       string
-    Latency    int64 
+    Latency    int64
 
 	ConnectionEvents []ConnectionEvents
 	// Counters for the different topics
@@ -76,7 +76,7 @@ func (c *GossipState) MarshalPeerStore(ep track.ExtendedPeerstore) ([]byte, erro
     peers = ep.Peers()
     peerData := make(map[string]*track.PeerAllData)
     for _, p := range peers {
-        peerData[p.String()] = ep.GetAllData(p)    
+        peerData[p.String()] = ep.GetAllData(p)
     }
     return json.Marshal(peerData)
 }
@@ -173,8 +173,13 @@ func (c *GossipState) AddNewPeer(peerId peer.ID, ep track.ExtendedPeerstore) {	/
             Ip: ip,
             Country: country,
             City: city,
-            Latency: peerData.Latency.Milliseconds(),
+            Latency: int64(peerData.Latency / 1*time.Millisecond),
         }
+
+        // Temp
+        fmt.Println(peerMetrics.Latency)
+		// Temp
+
         // Include the new PeerMetrics struct on the syn.Map
         c.GossipMetrics.Store(peerId.String(), peerMetrics)
     }
