@@ -35,7 +35,7 @@ type PeerMetrics struct {
 	Ip         string
     Country    string
     City       string
-    Latency    int64
+    Latency    float64
 
 	ConnectionEvents []ConnectionEvents
 	// Counters for the different topics
@@ -173,7 +173,7 @@ func (c *GossipState) AddNewPeer(peerId peer.ID, ep track.ExtendedPeerstore) {	/
             Ip: ip,
             Country: country,
             City: city,
-            Latency: int64(peerData.Latency / 1*time.Millisecond),
+            Latency: float64(peerData.Latency / 1*time.Millisecond),
         }
 
         // Temp
