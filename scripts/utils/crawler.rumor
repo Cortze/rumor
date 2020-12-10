@@ -3,6 +3,7 @@ set -e
 # Example
 #export P2P_PORT=9030
 #export P2P_PRIV_KEY="50b99e30db23716e0d77d6d5874b9d2cbca1fdddcb044ad0d05eb02f9627402e"
+P2P_PUBLIC_IP="$(curl -s v4.ident.me)"
 #export FORK_DIGEST="0xe7a75d5a"
 #export PEER_TRACKER_WS_ADDR="ws://localhost:4000/peerstore/input/ws"
 #export PEER_TRACKER_KEY="foobar"
@@ -22,6 +23,7 @@ include gossip.rumor
 include listen.rumor
 source medalla_bootnodes.rumor  # source BOOT_NODES var
 echo "main bootnodes: $BOOT_NODES"
+include listen.rumor
 include dv5.rumor
 include connectall.rumor
 

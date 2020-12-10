@@ -24,7 +24,9 @@ func (c *EnrGenKeyCmd) Run(ctx context.Context, args ...string) error {
 	if err != nil {
 		return fmt.Errorf("failed to generate key: %v", err)
 	}
+	
 	secpKey := (*crypto.Secp256k1PrivateKey)(key)
+
 	keyBytes, err := secpKey.Raw()
 	if err != nil {
 		return fmt.Errorf("failed to serialize key: %v", err)
