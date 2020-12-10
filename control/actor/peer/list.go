@@ -3,7 +3,6 @@ package peer
 import (
 	"context"
 	"fmt"
-
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/p2p/track"

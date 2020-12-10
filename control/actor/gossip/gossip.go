@@ -2,17 +2,16 @@ package gossip
 
 import (
 	"errors"
-
 	"github.com/protolambda/ask"
 	"github.com/protolambda/rumor/control/actor/base"
-	"github.com/protolambda/rumor/metrics"
-	"github.com/protolambda/rumor/p2p/track"
+    "github.com/protolambda/rumor/p2p/track"
+    "github.com/protolambda/rumor/metrics"
 )
 
 type GossipCmd struct {
 	*base.Base
 	*metrics.GossipState
-	Store track.ExtendedPeerstore
+    Store track.ExtendedPeerstore
 }
 
 func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
@@ -35,9 +34,9 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &GossipLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
 		cmd = &GossipPublishCmd{Base: c.Base, GossipState: c.GossipState}
-  case "export-metrics":
+    case "export-metrics":
 		cmd = &GossipExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
-  default:
+    default:
 		return nil, ask.UnrecognizedErr
 	}
 	return cmd, nil

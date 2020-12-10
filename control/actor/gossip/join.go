@@ -3,8 +3,8 @@ package gossip
 import (
 	"context"
 	"fmt"
-	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/metrics"
+    "github.com/protolambda/rumor/control/actor/base"
 )
 
 type GossipJoinCmd struct {
@@ -30,7 +30,6 @@ func (c *GossipJoinCmd) Run(ctx context.Context, args ...string) error {
 		return err
 	}
 	c.GossipState.Topics.Store(c.TopicName, top)
-
 	c.Log.Infof("joined topic %s", c.TopicName)
 	return nil
 }

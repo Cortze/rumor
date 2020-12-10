@@ -3,7 +3,6 @@ package gossip
 import (
 	"context"
 	"encoding/base64"
-
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
