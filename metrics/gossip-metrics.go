@@ -177,6 +177,7 @@ func (c *GossipState) AddNewPeer(peerId peer.ID, ep track.ExtendedPeerstore) {	/
         }
 
         // Temp
+        fmt.Println(peerData.Latency)
         fmt.Println(peerMetrics.Latency)
 		// Temp
 
@@ -248,8 +249,6 @@ func (c *GossipState) IncomingMessageManager(peerId peer.ID, topicName string) e
 	messageMetrics.IncrementCnt()
 	messageMetrics.StampTime("last")
 
-	fmt.Println(err, topicName, messageMetrics)
-	fmt.Println(err, topicName, peerMetrics)
     // Store back the Loaded/Modified Variable
     c.GossipMetrics.Store(peerId.String(), peerMetrics)
 
@@ -258,8 +257,6 @@ func (c *GossipState) IncomingMessageManager(peerId peer.ID, topicName string) e
 
 func GetMessageMetrics(c *PeerMetrics, topicName string) (mesMetr *MessageMetrics, err error) {
 	// All this could be inside a different function
-	fmt.Println(topicName)
-
 	switch topicName {
 	case pgossip.BeaconBlock:
 		return &c.BeaconBlock, nil
