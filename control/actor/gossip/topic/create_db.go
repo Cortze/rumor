@@ -1,18 +1,15 @@
 package topic
 
 import (
-    "context"
 	"fmt"
-
+    "github.com/protolambda/rumor/metrics"
 	"github.com/protolambda/rumor/control/actor/base"
-	"github.com/protolambda/rumor/p2p/gossip"
-
 )
 
 
 type TopicCreateDBCmd struct {
     *base.Base
-	GossipState *gossip.GossipState
+	GossipState *metrics.GossipState
 
 	// Variables might be usable to see if it already exists a db for the given topic
 	TopicName   string `ask:"--topic-name" help:"The name of the topic to join"`
@@ -24,18 +21,14 @@ type TopicCreateDBCmd struct {
 }
 
 func (c *TopicCreateDBCmd) Default() {
-    fmt.Printls("Default settings for the generated database")
+    fmt.Println("Default settings for the generated database")
 }
-
-
 
 func (c *TopicCreateDBCmd) Help() string {
     return "Creates a Database where all the  received messages on the given topics will be stored"
 }
 
-
-
-func (c *TopicCreateDBCmd) Cmd() string {
+func (c *TopicCreateDBCmd) Cmd() {
 
     fmt.Println("Creating the database ")
 

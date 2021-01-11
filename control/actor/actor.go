@@ -16,7 +16,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/dv5"
 	"github.com/protolambda/rumor/control/actor/enr"
 	"github.com/protolambda/rumor/control/actor/gossip"
-	"github.com/protolambda/rumor/control/actor/host"
+    "github.com/protolambda/rumor/control/actor/host"
 	"github.com/protolambda/rumor/control/actor/peer"
 	"github.com/protolambda/rumor/control/actor/peer/metadata"
 	"github.com/protolambda/rumor/control/actor/peer/status"
@@ -60,7 +60,7 @@ type Actor struct {
 	Dv5State dv5.Dv5State
 
 	GossipState metrics.GossipState
-	RPCState    rpc.RPCState
+    RPCState    rpc.RPCState
 
 	HostState host.HostState
 

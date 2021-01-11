@@ -10,18 +10,18 @@ import (
     "github.com/protolambda/rumor/metrics"
 )
 
-type GossipEventsCmd struct {
+type TopicEventsCmd struct {
 	*base.Base
 	GossipState *metrics.GossipState
     Store   track.ExtendedPeerstore
 	TopicName string `ask:"<topic>" help:"The name of the topic to track events of"`
 }
 
-func (c *GossipEventsCmd) Help() string {
+func (c *TopicEventsCmd) Help() string {
 	return "Listen for events (not messages) on this topic. Events: 'join=<peer-ID>', 'leave=<peer-ID>'"
 }
 
-func (c *GossipEventsCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicEventsCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}

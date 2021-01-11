@@ -2,18 +2,16 @@ package topic
 
 
 import(
-
+    "errors"
     "github.com/protolambda/ask"
 	"github.com/protolambda/rumor/control/actor/base"
-	"github.com/protolambda/rumor/p2p/gossip"
-
+	"github.com/protolambda/rumor/metrics"
     "github.com/protolambda/rumor/p2p/track"
-    "github.com/protolambda/rumor/metrics"
 )
 
 type TopicCmd struct {
     *base.Base
-    *gossip.GossipState
+    GossipState *metrics.GossipState
     Store track.ExtendedPeerstore
 }
 
@@ -27,21 +25,21 @@ func (c *TopicCmd) Cmd(route string) (cmd interface{}, err error) {
 
     switch route {
     case "create-db":
-        cmd = &TopicCreateDBCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+        cmd = &TopicCreateDBCmd{Base: c.Base, GossipState: c.GossipState}
 	case "events":
-		cmd = &TopicEventsCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState, Store: c.Store}
+		cmd = &TopicEventsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
 	case "join":
-		cmd = &TopicJoinCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+		cmd = &TopicJoinCmd{Base: c.Base, GossipState: c.GossipState}
 	case "list_peers":
-		cmd = &TopicListPeersCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+		cmd = &TopicListPeersCmd{Base: c.Base, GossipState: c.GossipState}
 	case "leave":
-		cmd = &TopicLeaveCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+		cmd = &TopicLeaveCmd{Base: c.Base, GossipState: c.GossipState}
 	case "log":
-		cmd = &TopicLogCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+		cmd = &TopicLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
-		cmd = &TopicPublishCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState}
+		cmd = &TopicPublishCmd{Base: c.Base, GossipState: c.GossipState}
 	case "export-metrics":
-        cmd = &TopicExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, GossipState: c.GossipState, Store: c.Store}
+        cmd = &TopicExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
     default:
 		return nil, ask.UnrecognizedErr
 	}
