@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -8,9 +8,9 @@ import (
     "github.com/protolambda/rumor/p2p/track"
 )
 
-type GossipExportMetricsCmd struct {
+type TopicExportMetricsCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
     Store track.ExtendedPeerstore
     ExportPeriod time.Duration `ask:"--export-period" help:"Requets the frecuency in witch the Metrics will be exported to the files"`
 	FilePath string `ask:"--file-path" help:"The path of the file where to export the metrics."`
@@ -18,15 +18,15 @@ type GossipExportMetricsCmd struct {
 
 }
 
-func (c *GossipExportMetricsCmd) Defaul() {
+func (c *TopicExportMetricsCmd) Defaul() {
     c.ExportPeriod = 30 * time.Second
 }
 
-func (c *GossipExportMetricsCmd) Help() string {
+func (c *TopicExportMetricsCmd) Help() string {
 	return "Exports the Gossip Metrics to the given file path"
 }
 
-func (c *GossipExportMetricsCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicExportMetricsCmd) Run(ctx context.Context, args ...string) error {
     if c.GossipState.GsNode == nil {
         return NoGossipErr
     }

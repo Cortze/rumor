@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 
 type GossipEventsCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
     Store   track.ExtendedPeerstore
 	TopicName string `ask:"<topic>" help:"The name of the topic to track events of"`
 }

@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -10,18 +10,18 @@ import (
     "github.com/protolambda/rumor/metrics"
 )
 
-type GossipPublishCmd struct {
+type TopicPublishCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to publish to"`
 	Message   []byte `ask:"<message>" help:"The uncompressed message bytes, hex-encoded"`
 }
 
-func (c *GossipPublishCmd) Help() string {
+func (c *TopicPublishCmd) Help() string {
 	return "Publish a message to the topic. The message should be hex-encoded."
 }
 
-func (c *GossipPublishCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicPublishCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}

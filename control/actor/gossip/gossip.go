@@ -6,6 +6,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/base"
     "github.com/protolambda/rumor/p2p/track"
     "github.com/protolambda/rumor/metrics"
+    "github.com/protolambda/rumor/gossip/topic"
 )
 
 type GossipCmd struct {
@@ -21,21 +22,21 @@ func (c *GossipCmd) Cmd(route string) (cmd interface{}, err error) {
 	case "list":
 		cmd = &GossipListCmd{Base: c.Base, GossipState: c.GossipState}
 	case "join":
-		cmd = &GossipJoinCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &TopicJoinCmd{Base: c.Base, GossipState: c.GossipState}
 	case "events":
-		cmd = &GossipEventsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
+		cmd = &TopicEventsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
 	case "list-peers":
-		cmd = &GossipListPeersCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &TopicListPeersCmd{Base: c.Base, GossipState: c.GossipState}
 	case "blacklist":
 		cmd = &GossipBlacklistCmd{Base: c.Base, GossipState: c.GossipState}
 	case "leave":
-		cmd = &GossipLeaveCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &TopicLeaveCmd{Base: c.Base, GossipState: c.GossipState}
 	case "log":
-		cmd = &GossipLogCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &TopicLogCmd{Base: c.Base, GossipState: c.GossipState}
 	case "publish":
-		cmd = &GossipPublishCmd{Base: c.Base, GossipState: c.GossipState}
+		cmd = &TopicPublishCmd{Base: c.Base, GossipState: c.GossipState}
     case "export-metrics":
-		cmd = &GossipExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
+		cmd = &TopicExportMetricsCmd{Base: c.Base, GossipState: c.GossipState, Store: c.Store}
     default:
 		return nil, ask.UnrecognizedErr
 	}

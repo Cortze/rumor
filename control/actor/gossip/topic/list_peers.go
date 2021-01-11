@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -8,17 +8,17 @@ import (
     "github.com/protolambda/rumor/metrics"
 )
 
-type GossipListPeersCmd struct {
+type TopicListPeersCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to list peers of"`
 }
 
-func (c *GossipListPeersCmd) Help() string {
+func (c *TopicListPeersCmd) Help() string {
 	return "List the peers known for the given topic"
 }
 
-func (c *GossipListPeersCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicListPeersCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}

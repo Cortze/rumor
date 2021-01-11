@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -12,17 +12,17 @@ import (
 	"strings"
 )
 
-type GossipLogCmd struct {
+type TopicLogCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to log messages of"`
 }
 
-func (c *GossipLogCmd) Help() string {
+func (c *TopicLogCmd) Help() string {
 	return "Log the messages of a gossip topic. Messages are hex-encoded. Join a topic first."
 }
 
-func (c *GossipLogCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicLogCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}

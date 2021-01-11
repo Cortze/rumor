@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -8,17 +8,17 @@ import (
     "github.com/protolambda/rumor/metrics"
 )
 
-type GossipLeaveCmd struct {
+type TopicLeaveCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to leave"`
 }
 
-func (c *GossipLeaveCmd) Help() string {
+func (c *TopicLeaveCmd) Help() string {
 	return "Leave a gossip topic."
 }
 
-func (c *GossipLeaveCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicLeaveCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}

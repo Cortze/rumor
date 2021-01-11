@@ -1,4 +1,4 @@
-package gossip
+package topic
 
 import (
 	"context"
@@ -7,17 +7,17 @@ import (
     "github.com/protolambda/rumor/control/actor/base"
 )
 
-type GossipJoinCmd struct {
+type TopicJoinCmd struct {
 	*base.Base
-	*metrics.GossipState
+	GossipState *metrics.GossipState
 	TopicName string `ask:"<topic>" help:"The name of the topic to join"`
 }
 
-func (c *GossipJoinCmd) Help() string {
+func (c *TopicJoinCmd) Help() string {
 	return "Join a gossip topic. This only sets up the topic, it does not actively find peers. See `gossip log start` and `gossip publish`."
 }
 
-func (c *GossipJoinCmd) Run(ctx context.Context, args ...string) error {
+func (c *TopicJoinCmd) Run(ctx context.Context, args ...string) error {
 	if c.GossipState.GsNode == nil {
 		return NoGossipErr
 	}
