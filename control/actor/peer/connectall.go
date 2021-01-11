@@ -11,7 +11,7 @@ import (
 	"github.com/protolambda/rumor/p2p/addrutil"
 	"github.com/protolambda/rumor/p2p/track"
 	"github.com/protolambda/zrnt/eth2/beacon"
-	"reflect"
+    "reflect"
 	"sync"
 	"time"
 )
@@ -26,7 +26,8 @@ type PeerConnectAllCmd struct {
 	MaxPeers   uint64        `ask:"--max-peers" help:"max amount of peers, pause auto-connecting when above this"`
 
 	FilterDigest beacon.ForkDigest `ask:"--filter-digest" help:"Only connect when the peer is known to have the given fork digest in ENR. Or connect to any if not specified."`
-	Filtering    bool              `changed:"filter-digest"`
+	FilterPort   int   `ask:"--filter-port" help:"Only connect to peers that has the given port advertised on the ENR."`
+    Filtering    bool              `changed:"filter-digest"`
 }
 
 func (c *PeerConnectAllCmd) Default() {
@@ -253,9 +254,17 @@ func (c *PeerConnectAllCmd) run(ctx context.Context, h host.Host) {
 					if err != nil || !ok {
 						continue
 					}
-					if eth2Data.ForkDigest != c.FilterDigest {
-						continue
-					}
+                    peerPort := enr.TCP()
+				    if eth2Data.ForkDigest != c.FilterDigest {
+                        continue
+                    }
+                    if  peerPort != c.FilterPort {
+                        fmt.Println("Deprecated peer, port:", peerPort, "| parsed port:", c.FilterPort)
+                        continue
+					} else {
+                        fmt.Println("Listed peer, port:", peerPort)
+                    }
+
 				}
 				// Check if we're connected already
 				if status := h.Network().Connectedness(p); status != network.Connected {
