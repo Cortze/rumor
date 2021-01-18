@@ -27,7 +27,7 @@ type PeerConnectAllCmd struct {
 
 	FilterDigest beacon.ForkDigest `ask:"--filter-digest" help:"Only connect when the peer is known to have the given fork digest in ENR. Or connect to any if not specified."`
 	FilterPort   int   `ask:"--filter-port" help:"Only connect to peers that has the given port advertised on the ENR."`
-    Filtering    bool              `changed:"filter-digest"`
+    Filtering    bool  `changed:"filter-digest"`
 }
 
 func (c *PeerConnectAllCmd) Default() {
@@ -36,6 +36,7 @@ func (c *PeerConnectAllCmd) Default() {
 	c.MaxRetries = 5
 	c.Workers = 1
 	c.MaxPeers = 200
+    c.FilterPort = -1
 }
 
 func (c *PeerConnectAllCmd) Help() string {
@@ -258,11 +259,13 @@ func (c *PeerConnectAllCmd) run(ctx context.Context, h host.Host) {
 				    if eth2Data.ForkDigest != c.FilterDigest {
                         continue
                     }
-                    if  peerPort != c.FilterPort {
-                        fmt.Println("Deprecated peer, port:", peerPort, "| parsed port:", c.FilterPort)
-                        continue
-					} else {
-                        fmt.Println("Listed peer, port:", peerPort)
+                    if c.FilterPort >= 0 {
+                        if  peerPort != c.FilterPort {
+                            fmt.Println("Deprecated peer, port:", peerPort, "| parsed port:", c.FilterPort)
+                            continue
+                        } else {
+                            fmt.Println("Listed peer, port:", peerPort)
+                        }
                     }
 
 				}

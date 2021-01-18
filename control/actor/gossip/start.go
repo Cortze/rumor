@@ -6,6 +6,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/base"
 	"github.com/protolambda/rumor/p2p/gossip"
     "github.com/protolambda/rumor/metrics"
+    "github.com/protolambda/zrnt/eth2/configs"
 )
 
 type GossipStartCmd struct {
@@ -30,5 +31,8 @@ func (c *GossipStartCmd) Run(ctx context.Context, args ...string) error {
 		return err
 	}
 	c.Log.Info("Started GossipSub")
+    // Set the Spec to the Mainnet configuration
+    c.GossipState.TopicDatabase.Spec = configs.Mainnet
+    c.Log.Info("Message Configuration set to Mainnet")
 	return nil
 }
