@@ -11,6 +11,7 @@ import (
     "strings"
     "net/http"
 
+    "github.com/protolambda/rumor/p2p/gossip/database"
 	"github.com/libp2p/go-libp2p-core/peer"
 	pgossip "github.com/protolambda/rumor/p2p/gossip"
 	"github.com/protolambda/rumor/p2p/track"
@@ -23,6 +24,7 @@ type GossipState struct {
 	Topics sync.Map
 	// Metrics for Gossip Messages
 	GossipMetrics sync.Map
+    TopicDatabase database.TopicDatabase
 }
 
 // Base Struct for the topic name and the received messages on the different topics
