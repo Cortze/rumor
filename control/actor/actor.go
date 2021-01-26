@@ -204,6 +204,16 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
         cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState, Store: store}
 	case "rpc":
 		cmd = &rpc.RpcCmd{Base: b, RPCState: &c.RPCState}
+    case "gossip-import":
+        bl, ok := c.GlobalBlocksDBs.Find(c.BlocksState.CurrentDB)
+		if !ok {
+			return nil, errors.New("no blocks DB available, try 'blocks create'")
+		}
+		st, ok := c.GlobalStatesDBs.Find(c.StatesState.CurrentDB)
+		if !ok {
+			return nil, errors.New("no states DB available, try 'states create'")
+		}
+		cmd = &chain.ChainCmd{Base: b, BlockState: bl, StatesStates: st, GossipState: c.GossipState}
 	case "blocks":
 		cmd = &blocks.BlocksCmd{Base: b, DBs: c.GlobalBlocksDBs, DBState: &c.BlocksState}
 	case "states":
@@ -230,7 +240,7 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 }
 
 var topRoutes = []string{"host", "enr", "peer", "peerstore", "dv5", "gossip",
-	"rpc", "blocks", "states", "chain", "sleep", "tool"}
+	"rpc", "blocks", "states", "gossip-import", "chain", "sleep", "tool"}
 var topRoutesMap = map[string]struct{}{}
 
 func init() {
