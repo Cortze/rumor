@@ -10,11 +10,12 @@ import (
 
 type TopicExportMetricsCmd struct {
 	*base.Base
-	GossipState *metrics.GossipState
-    Store track.ExtendedPeerstore
-    ExportPeriod time.Duration `ask:"--export-period" help:"Requets the frecuency in witch the Metrics will be exported to the files"`
-	FilePath string `ask:"--file-path" help:"The path of the file where to export the metrics."`
-	PeerstorePath string `ask:"--peerstore-path" help:"The path of the file where to export the peerstore."`
+	GossipMetrics   *metrics.GossipMetrics
+    GossipState     *metrics.GossipState
+    Store           track.ExtendedPeerstore
+    ExportPeriod    time.Duration `ask:"--export-period" help:"Requets the frecuency in witch the Metrics will be exported to the files"`
+	FilePath        string `ask:"--file-path" help:"The path of the file where to export the metrics."`
+	PeerstorePath   string `ask:"--peerstore-path" help:"The path of the file where to export the peerstore."`
 
 }
 
@@ -34,13 +35,14 @@ func (c *TopicExportMetricsCmd) Run(ctx context.Context, args ...string) error {
 	go func() {
 		for {
             if stopping {
-                c.Log.Infof("Metrics Export Stopped")
+                c.Log.Infof("Metrics Export Stopped, be aware that the exporting time could take more time between export and export (Only the time between them is the one designed, BETA version)")
                 return
             }
 			start := time.Now()
 
             c.Log.Infof("Exporting Metrics")
-	        err := c.GossipState.ExportMetrics(c.FilePath, c.PeerstorePath, c.Store)
+            c.GossipMetrics.FillMetrics(c.Store)
+	        err := c.GossipMetrics.ExportMetrics(c.FilePath, c.PeerstorePath, c.Store)
             if err != nil {
                 c.Log.Infof("Problems exporting the Metrics to the given file path")
             } else {

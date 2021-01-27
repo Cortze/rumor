@@ -15,7 +15,8 @@ import (
 type TopicEventsCmd struct {
 	*base.Base
 	GossipState *metrics.GossipState
-	Store       track.ExtendedPeerstore
+	GossipMetrics *metrics.GossipMetrics
+    Store       track.ExtendedPeerstore
 	//TopicName string `ask:"<topic>" help:"The name of the topic to track events of"`
 	Eth2TopicName string `ask:"--eth-topic" help:"The name of the eth2 topics"`
 	ForkDigest    string `ask:"--fork-version" help:"The fork digest value of the network we want to join to (Default Mainnet)"`
@@ -58,11 +59,8 @@ func (c *TopicEventsCmd) Run(ctx context.Context, args ...string) error {
 				}
 				switch ev.Type {
 				case pubsub.PeerJoin:
-					c.GossipState.AddNewPeer(ev.Peer, c.Store)
-					c.GossipState.AddConnectionEvent(ev.Peer, "Connection")
 					c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": topicName}).Info("topic joined")
 				case pubsub.PeerLeave:
-					c.GossipState.AddConnectionEvent(ev.Peer, "Disconnection")
 					c.Log.WithFields(logrus.Fields{"peer_id": ev.Peer, "topic": topicName}).Info("topic left")
 				}
 			}

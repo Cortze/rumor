@@ -21,7 +21,8 @@ import (
 
 type TopicLogCmd struct {
 	*base.Base
-	GossipState   *metrics.GossipState
+	GossipMetrics *metrics.GossipMetrics
+    GossipState   *metrics.GossipState
 	Eth2TopicName string `ask:"--eth-topic" help:"The name of the eth2 topics"`
 	ForkDigest    string `ask:"--fork-version" help:"The fork digest value of the network we want to join to (Default Mainnet)"`
 	Encoding      string `ask:"--encoding" help:"Encoding that is getting used"`
@@ -73,18 +74,18 @@ func (c *TopicLogCmd) Run(ctx context.Context, args ...string) error {
 						} else {
 							msgData = msg.Data
 						}
-						c.GossipState.IncomingMessageManager(msg.ReceivedFrom, topicName)
 						c.Log.WithFields(logrus.Fields{
 							"from":      msg.ReceivedFrom.String(),
 							"data":      hex.EncodeToString(msgData),
 							"signature": hex.EncodeToString(msg.Signature),
 							"seq_no":    hex.EncodeToString(msg.Seqno),
 						}).Infof("new message on %s", topicName)
-						// Deserialize the message depending on the topic name
+						c.GossipMetrics.IncomingMessageManager(msg.ReceivedFrom, topicName)
+                        // Deserialize the message depending on the topic name
 						// generate a new ReceivedMessage on the Temp Database
                         // check if the topic has a db asiciated
-                        if _, ok := c.GossipState.TopicDatabase.TopicDB.Load(topicName); ok {
-                            err := AddMsgToTopicDB(&c.GossipState.TopicDatabase, msg.ReceivedFrom, topicName, msgData)
+                        if _, ok := c.GossipMetrics.TopicDatabase.TopicDB.Load(topicName); ok {
+                            err := AddMsgToTopicDB(&c.GossipMetrics.TopicDatabase, msg.ReceivedFrom, topicName, msgData)
                             if err != nil {
                                 c.Log.WithError(err).WithField("topic", topicName).Error("Error saving message on temp database")
                             }

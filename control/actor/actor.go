@@ -4,6 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"sync"
+	"time"
+
+    "github.com/protolambda/zrnt/eth2/configs"
+
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/protolambda/ask"
@@ -16,6 +22,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/dv5"
 	"github.com/protolambda/rumor/control/actor/enr"
 	"github.com/protolambda/rumor/control/actor/gossip"
+//	gi "github.com/protolambda/rumor/control/actor/gossipimporter"
     "github.com/protolambda/rumor/control/actor/host"
 	"github.com/protolambda/rumor/control/actor/peer"
 	"github.com/protolambda/rumor/control/actor/peer/metadata"
@@ -24,13 +31,10 @@ import (
 	"github.com/protolambda/rumor/control/actor/rpc"
 	"github.com/protolambda/rumor/control/actor/states"
 	"github.com/protolambda/rumor/control/tool"
-	"github.com/protolambda/rumor/p2p/addrutil"
 	"github.com/protolambda/rumor/metrics"
-    "github.com/protolambda/rumor/p2p/track"
+	"github.com/protolambda/rumor/p2p/addrutil"
+	"github.com/protolambda/rumor/p2p/track"
 	"github.com/sirupsen/logrus"
-	"io"
-	"sync"
-	"time"
 )
 
 type GlobalActorData struct {
@@ -59,8 +63,9 @@ type Actor struct {
 
 	Dv5State dv5.Dv5State
 
-	GossipState metrics.GossipState
-    RPCState    rpc.RPCState
+	GossipState   metrics.GossipState
+	GossipMetrics metrics.GossipMetrics
+	RPCState      rpc.RPCState
 
 	HostState host.HostState
 
@@ -81,7 +86,8 @@ func NewActor(id ActorID, globals *GlobalActorData) *Actor {
 		ActorCtx:         ctxAll,
 		actorCancel:      cancelAll,
 		CurrentPeerstore: track.NewDynamicPeerstore(),
-	}
+        GossipMetrics:    metrics.NewGossipMetrics(configs.Mainnet),  // HARCODED to Mainnet
+    }
 	return act
 }
 
@@ -170,6 +176,7 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 			WithCloseHost:    &c.HostState,
 			GlobalPeerstores: c.GlobalPeerstores,
 			CurrentPeerstore: c.CurrentPeerstore,
+			GossipMetrics:    &c.GossipMetrics,
 		}
 	case "enr":
 		cmd = &enr.EnrCmd{Base: b, Lazy: &c.LazyEnrState, PrivSettings: c, WithHostPriv: &c.HostState}
@@ -198,22 +205,22 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &dv5.Dv5Cmd{Base: b, Dv5State: &c.Dv5State, Dv5Settings: settings, CurrentPeerstore: c.CurrentPeerstore}
 	case "gossip":
 		store := c.CurrentPeerstore
-        if !store.Initialized() {
-            store = nil
-        }
-        cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState, Store: store}
+		if !store.Initialized() {
+			store = nil
+		}
+		cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState, GossipMetrics: &c.GossipMetrics, Store: store}
 	case "rpc":
 		cmd = &rpc.RpcCmd{Base: b, RPCState: &c.RPCState}
-    case "gossip-import":
-        bl, ok := c.GlobalBlocksDBs.Find(c.BlocksState.CurrentDB)
-		if !ok {
-			return nil, errors.New("no blocks DB available, try 'blocks create'")
-		}
-		st, ok := c.GlobalStatesDBs.Find(c.StatesState.CurrentDB)
-		if !ok {
-			return nil, errors.New("no states DB available, try 'states create'")
-		}
-		cmd = &chain.ChainCmd{Base: b, BlockState: bl, StatesStates: st, GossipState: c.GossipState}
+////case "gossip-import":
+////	bl, ok := c.GlobalBlocksDBs.Find(c.BlocksState.CurrentDB)
+////	if !ok {
+////		return nil, errors.New("no blocks DB available, try 'blocks create'")
+////	}
+////	st, ok := c.GlobalStatesDBs.Find(c.StatesState.CurrentDB)
+////	if !ok {
+////		return nil, errors.New("no states DB available, try 'states create'")
+////	}
+////	cmd = &gi.GossipImporterCmd{Base: b, BlockState: bl, StatesStates: st, GossipMetrics: &c.GossipMetrics}
 	case "blocks":
 		cmd = &blocks.BlocksCmd{Base: b, DBs: c.GlobalBlocksDBs, DBState: &c.BlocksState}
 	case "states":

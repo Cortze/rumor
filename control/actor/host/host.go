@@ -4,6 +4,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/protolambda/ask"
 	"github.com/protolambda/rumor/control/actor/base"
+	"github.com/protolambda/rumor/metrics"
 	"github.com/protolambda/rumor/p2p/track"
 )
 
@@ -21,6 +22,8 @@ type HostCmd struct {
 	GlobalPeerstores track.Peerstores
 	CurrentPeerstore track.DynamicPeerstore
 
+	GossipMetrics *metrics.GossipMetrics
+
 	WithSetHost
 	WithCloseHost
 	base.PrivSettings
@@ -28,7 +31,7 @@ type HostCmd struct {
 }
 
 func (c *HostCmd) Cmd(route string) (cmd interface{}, err error) {
-	switch route {
+    switch route {
 	case "start":
 		cmd = &HostStartCmd{Base: c.Base, WithSetHost: c.WithSetHost, PrivSettings: c.PrivSettings,
 			GlobalPeerstores: c.GlobalPeerstores, CurrentPeerstore: c.CurrentPeerstore}
@@ -39,7 +42,7 @@ func (c *HostCmd) Cmd(route string) (cmd interface{}, err error) {
 	case "listen":
 		cmd = &HostListenCmd{Base: c.Base, WithEnrNode: c.WithEnrNode}
 	case "notify":
-		cmd = &HostNotifyCmd{c.Base}
+		cmd = &HostNotifyCmd{Base: c.Base, GossipMetrics: c.GossipMetrics}
 	default:
 		return nil, ask.UnrecognizedErr
 	}

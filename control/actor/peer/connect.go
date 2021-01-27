@@ -48,7 +48,7 @@ func (c *PeerConnectCmd) Run(ctx context.Context, args ...string) error {
 		return err
 	}
 	c.Log.WithField("peer_id", addrInfo.ID.Pretty()).Infof("connected to peer")
-	if c.Tag != "" {
+    if c.Tag != "" {
 		h.ConnManager().Protect(addrInfo.ID, c.Tag)
 		c.Log.Infof("tagged peer %s as %s", addrInfo.ID.Pretty(), c.Tag)
 	}

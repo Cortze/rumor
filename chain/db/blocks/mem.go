@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/protolambda/zrnt/eth2/beacon"
-	"github.com/protolambda/ztyp/codec"
-	"github.com/protolambda/ztyp/tree"
 	"io"
 	"sync"
 	"sync/atomic"
+
+	"github.com/protolambda/zrnt/eth2/beacon"
+	"github.com/protolambda/ztyp/codec"
+	"github.com/protolambda/ztyp/tree"
 )
 
 type MemDB struct {
