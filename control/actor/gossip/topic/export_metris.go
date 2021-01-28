@@ -39,14 +39,15 @@ func (c *TopicExportMetricsCmd) Run(ctx context.Context, args ...string) error {
                 return
             }
 			start := time.Now()
-
             c.Log.Infof("Exporting Metrics")
             c.GossipMetrics.FillMetrics(c.Store)
 	        err := c.GossipMetrics.ExportMetrics(c.FilePath, c.PeerstorePath, c.Store)
             if err != nil {
                 c.Log.Infof("Problems exporting the Metrics to the given file path")
             } else {
-                c.Log.Infof("Metrics Exported")
+                ed := time.Since(start) / time.Millisecond
+                log := "Metrics Exported, time to export:" + ed.String()
+                c.Log.Infof(log)
             }
             exportStepDuration := time.Since(start)
 			if exportStepDuration < c.ExportPeriod{
