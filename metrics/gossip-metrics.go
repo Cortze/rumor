@@ -136,14 +136,19 @@ func (c *GossipMetrics) MarshalPeerStore(ep track.ExtendedPeerstore) ([]byte, er
 
 // Get the Real Ip Address from the multi Address list
 func GetFullAddress(multiAddrs []string) string {
-    var address string = multiAddrs[0]
-    for _, element := range multiAddrs {
-        if strings.Contains(element, "/ip4/192.168.") || strings.Contains(element, "/ip4/127.0.0.0") || strings.Contains(element, "/ip6/") || strings.Contains(element, "/ip4/172."){
-            continue
-        } else {
-            address = element
-            break
+    var address string 
+    if len(multiAddrs) > 0{
+        for _, element := range multiAddrs {
+            if strings.Contains(element, "/ip4/192.168.") || strings.Contains(element, "/ip4/127.0.0.0") || strings.Contains(element, "/ip6/") || strings.Contains(element, "/ip4/172."){
+                continue
+            } else {
+                address = element
+                break
+            }
         }
+    } else {
+        fmt.Println("Empty Multiaddress on Peerstore was found")
+        address = "/ip4/127.0.0.1/tcp/9000"
     }
     return address
 }
