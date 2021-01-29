@@ -158,46 +158,62 @@ func (c *GossipMetrics) FillMetrics(ep track.ExtendedPeerstore) {
         p, ok := c.GossipMetrics.Load(key)
         if ok {
             peerMetrics := p.(PeerMetrics)
-            // start with the loop checking the info, First check the Peerstore Info
-            if len(peerMetrics.ClientType) == 0 || peerMetrics.Latency != 0 || len(peerMetrics.Addrs) == 0 {
-                peerData := ep.GetAllData(peerMetrics.PeerId)
-                peerMetrics.NodeId      = peerData.NodeID.String()
-                peerMetrics.ClientType  = peerData.UserAgent
-                peerMetrics.Pubkey      = peerData.Pubkey
+            peerData := ep.GetAllData(peerMetrics.PeerId)
+            fmt.Println("Filling Metrics of Peer:", peerMetrics.PeerId.String())
+            if len(peerMetrics.NodeId) == 0 {
+                fmt.Println("NodeID empty", peerMetrics.NodeId, "Adding NodeId:", peerData.NodeID.String())
+                peerMetrics.NodeId  = peerData.NodeID.String()
+            }
 
+            if len(peerMetrics.ClientType) == 0 {
+                fmt.Println("ClientType empty", peerMetrics.ClientType, "Adding ClientType:", peerData.UserAgent)
+                peerMetrics.ClientType = peerData.UserAgent
+            }
+
+            if len(peerMetrics.Pubkey) == 0 {
+                fmt.Println("Pubkey empty", peerMetrics.Pubkey, "Adding Pubkey:", peerData.Pubkey)
+                peerMetrics.Pubkey = peerData.Pubkey
+            }
+
+            if len(peerMetrics.Addrs) == 0 {
                 address := GetFullAddress(peerData.Addrs)
-                if len(address) > 0 {
-                    peerMetrics.Addrs       = address
+                fmt.Println("Pubkey Addrs", peerMetrics.Addrs, "Adding Addrs:", address)
+                peerMetrics.Addrs = address
+            }
+
+            if len(peerMetrics.Country) == 0 {
+                if len(peerMetrics.Addrs) == 0 {
+                    fmt.Println("No Addrs on the PeerMetrics to request the Location")
+                } else {
+                    fmt.Println("Requesting the Location based on the addrs:", peerMetrics.Addrs)
                     ip, country, city := getIpAndLocationFromAddrs(peerMetrics.Addrs)
-                    // Increase the counter for preventing the DataFiller from crashing
                     requestCounter = requestCounter + 1
+                    fmt.Println("Increase the request counter to:", requestCounter)
+                    fmt.Println("Prev IP", peerMetrics.Ip, "Adding Ip:", ip)
+                    fmt.Println("Prev Country", peerMetrics.Country, "Adding Country:", country)
+                    fmt.Println("Prev City", peerMetrics.City, "Adding City:", city)
                     peerMetrics.Ip      = ip
                     peerMetrics.Country = country
                     peerMetrics.City    = city
                 }
-
-                fmt.Println("Previous latency (on metrics):", peerMetrics.Latency)
-                peerMetrics.Latency = float64(peerData.Latency / 1*time.Millisecond)
-                c.GossipMetrics.Store(peerMetrics.PeerId, peerMetrics)
-                fmt.Println("New latency (on peerstore)", peerData.Latency)
             }
 
-            if len(peerMetrics.Country) == 0 && len(peerMetrics.Ip) < 0 {
-                ip, country, city := getIpAndLocationFromAddrs(peerMetrics.Addrs)
-                // Increase the counter for preventing the DataFiller from crashing
-                requestCounter = requestCounter + 1
-                peerMetrics.Ip      = ip
-                peerMetrics.Country = country
-                peerMetrics.City    = city
-                c.GossipMetrics.Store(peerMetrics.PeerId, peerMetrics)
-            }
-        }
+            // Since we want to have the latest Latency, we always update it
+            fmt.Println("Latency Empty", peerMetrics.Latency, "Adding Latency:", peerData.Latency)
+            peerMetrics.Latency = float64(peerData.Latency)
+            fmt.Println("Added Latency:", peerMetrics.Latency)
+
+            // After check that all the info is ready, save the item back into the Sync.Map
+            c.GossipMetrics.Store(key, peerMetrics)
+
         if requestCounter >= 45 { // Reminder 45 req/s
+            fmt.Println("Request Limit reached, waitig 60 secs")
             time.Sleep(60 * time.Second)
             requestCounter = 0
         }
-        // Keep with the loop on the Range function
-        return true
+    }
+    // Keep with the loop on the Range function
+    return true
     })
 
 }

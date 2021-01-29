@@ -45,7 +45,7 @@ func (c *TopicExportMetricsCmd) Run(ctx context.Context, args ...string) error {
             if err != nil {
                 c.Log.Infof("Problems exporting the Metrics to the given file path")
             } else {
-                ed := time.Since(start) / time.Millisecond
+                ed := time.Since(start)
                 log := "Metrics Exported, time to export:" + ed.String()
                 c.Log.Infof(log)
             }
