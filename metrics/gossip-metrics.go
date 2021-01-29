@@ -200,7 +200,7 @@ func (c *GossipMetrics) FillMetrics(ep track.ExtendedPeerstore) {
 
             // Since we want to have the latest Latency, we always update it
             fmt.Println("Latency Empty", peerMetrics.Latency, "Adding Latency:", peerData.Latency)
-            peerMetrics.Latency = float64(peerData.Latency)
+            peerMetrics.Latency = float64(peerData.Latency * time.Millisecond)
             fmt.Println("Added Latency:", peerMetrics.Latency)
 
             // After check that all the info is ready, save the item back into the Sync.Map
