@@ -136,10 +136,10 @@ func (c *GossipMetrics) MarshalPeerStore(ep track.ExtendedPeerstore) ([]byte, er
 
 // Get the Real Ip Address from the multi Address list
 func GetFullAddress(multiAddrs []string) string {
-    var address string 
+    var address string
     if len(multiAddrs) > 0{
         for _, element := range multiAddrs {
-            if strings.Contains(element, "/ip4/192.168.") || strings.Contains(element, "/ip4/127.0.0.0") || strings.Contains(element, "/ip6/") || strings.Contains(element, "/ip4/172."){
+            if strings.Contains(element, "/ip4/192.168.") || strings.Contains(element, "/ip4/127.0.") || strings.Contains(element, "/ip6/") || strings.Contains(element, "/ip4/172.") || strings.Contains(element, "0.0.0.0") {
                 continue
             } else {
                 address = element
@@ -182,7 +182,7 @@ func (c *GossipMetrics) FillMetrics(ep track.ExtendedPeerstore) {
 
             if len(peerMetrics.Addrs) == 0 {
                 address := GetFullAddress(peerData.Addrs)
-                fmt.Println("Pubkey Addrs", peerMetrics.Addrs, "Adding Addrs:", address)
+                fmt.Println("Addrs empty", peerMetrics.Addrs, "Adding Addrs:", address)
                 peerMetrics.Addrs = address
             }
 
