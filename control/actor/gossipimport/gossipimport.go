@@ -150,7 +150,7 @@ func (c *GossipImportCmd) Run( ctx context.Context, args ...string) error {
 }
 
 // List of queries for the different clients that can be used to obtain the BeaconState
-var PrysmBSQuery string = "/eth/v1alpha1/debug/state/"
+var PrysmBSQuery string = "/eth/v1alpha1/debug/state?="
 
 func ComposePrysmBSRequest(ip string, port string, query string) string {
     composedUrl := "https:" + ip + ":" + port + PrysmBSQuery
