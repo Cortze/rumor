@@ -20,13 +20,13 @@ type TopicCreateDBCmd struct {
 	Encoding         string `ask:"--encoding" help:"Encoding that is getting used"`
 	TempMessageLimit int    `ask:"--temp-msg-limit" help:"The number of Messages that will be kept on the Temporary Database (Like a Cache of messages)"`
 	// For later, when the real database is stored
-	StoreType string `ask:"--store-type" help:"The type of datastore to use. Options: 'mem', 'leveldb', 'badger'"`
-	StorePath string `ask:"--store-path" help:"The path of the datastore, must be empty for memory store."`
+	//StoreType string `ask:"--store-type" help:"The type of datastore to use. Options: 'mem', 'leveldb', 'badger'"`
+	//StorePath string `ask:"--store-path" help:"The path of the datastore, must be empty for memory store."`
 }
 
 func (c *TopicCreateDBCmd) Default() {
 	c.ForkDigest = "b5303f2a" // Mainnet Fork Digest
-	c.TempMessageLimit = 50
+	c.TempMessageLimit = 20
 	c.Encoding = "ssz_snappy"
 }
 
