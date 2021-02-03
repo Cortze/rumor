@@ -22,8 +22,6 @@ import (
 type GossipMetrics struct {
     GossipMetrics   sync.Map
     TopicDatabase   database.TopicDatabase
-//   PeerIdMap       map[string]peer.ID
-//   NotChan         map[string]chan bool
 }
 
 
@@ -31,8 +29,6 @@ type GossipMetrics struct {
 func NewGossipMetrics(config *beacon.Spec) GossipMetrics{
     gm := GossipMetrics {
         TopicDatabase:  database.NewTopicDatabase(config),
-        //PeerIdMap:      make(map[string]peer.ID),
-        //c.NotChan   := make(map[string])
     }
     return gm
 }

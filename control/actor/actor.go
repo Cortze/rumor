@@ -22,7 +22,7 @@ import (
 	"github.com/protolambda/rumor/control/actor/dv5"
 	"github.com/protolambda/rumor/control/actor/enr"
 	"github.com/protolambda/rumor/control/actor/gossip"
-//	gi "github.com/protolambda/rumor/control/actor/gossipimporter"
+	gi "github.com/protolambda/rumor/control/actor/gossipimport"
     "github.com/protolambda/rumor/control/actor/host"
 	"github.com/protolambda/rumor/control/actor/peer"
 	"github.com/protolambda/rumor/control/actor/peer/metadata"
@@ -211,16 +211,23 @@ func (c *ActorCmd) Cmd(route string) (cmd interface{}, err error) {
 		cmd = &gossip.GossipCmd{Base: b, GossipState: &c.GossipState, GossipMetrics: &c.GossipMetrics, Store: store}
 	case "rpc":
 		cmd = &rpc.RpcCmd{Base: b, RPCState: &c.RPCState}
-////case "gossip-import":
-////	bl, ok := c.GlobalBlocksDBs.Find(c.BlocksState.CurrentDB)
-////	if !ok {
-////		return nil, errors.New("no blocks DB available, try 'blocks create'")
-////	}
-////	st, ok := c.GlobalStatesDBs.Find(c.StatesState.CurrentDB)
-////	if !ok {
-////		return nil, errors.New("no states DB available, try 'states create'")
-////	}
-////	cmd = &gi.GossipImporterCmd{Base: b, BlockState: bl, StatesStates: st, GossipMetrics: &c.GossipMetrics}
+    case "gossip-import":
+//      bl, ok := c.GlobalBlocksDBs.Find(c.BlocksState.CurrentDB)
+//      if !ok {
+//          return nil, errors.New("no blocks DB available, try 'blocks create'")
+//      }
+//      st, ok := c.GlobalStatesDBs.Find(c.StatesState.CurrentDB)
+//      if !ok {
+//          return nil, errors.New("no states DB available, try 'states create'")
+//      }
+        // 
+        cmd = &gi.GossipImportCmd{
+            Base:           b,
+            BlocksDB:       c.GlobalBlocksDBs,
+            BlockDBState:   &c.BlocksState,
+            StatesDB:       c.GlobalStatesDBs,
+            StateDBState:   &c.StatesState,
+            GossipMetrics:  &c.GossipMetrics}
 	case "blocks":
 		cmd = &blocks.BlocksCmd{Base: b, DBs: c.GlobalBlocksDBs, DBState: &c.BlocksState}
 	case "states":

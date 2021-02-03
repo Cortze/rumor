@@ -1,6 +1,6 @@
 package gossip
 
-import (
+import(
     "errors"
     "github.com/protolambda/ask"
     "github.com/protolambda/rumor/control/actor/base"

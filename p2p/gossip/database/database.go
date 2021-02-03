@@ -24,11 +24,13 @@ type ReceivedMessage interface {
 type TopicDatabase struct {
 	TopicDB sync.Map
 	Spec    *beacon.Spec
+    NotChan map[string](chan bool)
 }
 
 func NewTopicDatabase(config *beacon.Spec) TopicDatabase {
     tdb := TopicDatabase {
-        Spec:   config,
+        Spec:       config,
+        NotChan:    make(map[string](chan bool)),
     }
     return tdb
 }
@@ -55,7 +57,11 @@ func (c *TopicDatabase) NewTopic(topic string, msgLimit int) error {
 		}
 		// Include the topic to the sync.Map
 		c.TopicDB.Store(topic, db)
-		return nil
+		// generate the Notification Channel if it doesn't exist
+        if _, ok := c.NotChan[topic]; !ok {
+            c.NotChan[topic] = make(chan bool, 5) // 5 is the buffer size that for the channel
+        }
+        return nil
 	} else {
 		return fmt.Errorf("cannot create a new database for topic: %s, it already exists", topic)
 	}
@@ -95,6 +101,8 @@ func (c *TopicDatabase) WriteMessage(msg ReceivedMessage, topic string) error {
 	} else {
 		msgbd := value.(*MessagesDB)
 		msgbd.Write(msg)
+        // Send "true" notification through the NotChan so that the gossip-import can know that there is a new message
+        c.NotChan[topic] <- true // if it crashes means that it wasn't initialized
 	}
 	return nil
 }
