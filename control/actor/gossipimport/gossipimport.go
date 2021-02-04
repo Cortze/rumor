@@ -7,7 +7,7 @@ import (
     "fmt"
     "bytes"
     "net/http"
-	"github.com/protolambda/ztyp/codec"
+    "github.com/protolambda/ztyp/codec"
     "github.com/protolambda/rumor/p2p/gossip/database"
     "github.com/protolambda/rumor/control/actor/base"
     "github.com/protolambda/rumor/metrics"
@@ -87,27 +87,38 @@ func (c *GossipImportCmd) Run( ctx context.Context, args ...string) error {
                             fmt.Println("Error Reading the message from the messageDB")
                         } else {
                             var state *beacon.BeaconStateView
-                            bblock := bblockMsg.(database.ReceivedBeaconBlock)
+                            bblock := bblockMsg.(*database.ReceivedBeaconBlock)
                             sRoot := bblock.SignedBeaconBlock.Message.StateRoot
                             fmt.Println("Readed Block on slot:", bblock.SignedBeaconBlock.Message.Slot, "on Beacon State:", sRoot)
                             // Rquest the stire BeaconState from the associated Beacon Node
-                            rawbstate, err := RequestBeaconState(reqUrl, sRoot.String())
-                            bstate := bytes.NewReader(rawbstate)
+			    slotString := fmt.Sprint(bblock.SignedBeaconBlock.Message.Slot)
+                            rawbstate, err := RequestBeaconState(reqUrl, slotString)
                             if err != nil {
                                 fmt.Errorf("No Beacon State was received")
                                 continue
                             }
-                            stateSize := len(rawbstate)
-                            // With the spec.BeaconState() and the raw/plain BeaconState
+
+                            stateSize := rawbstate.ByteLength(c.GossipMetrics.TopicDatabase.Spec)
+			    fmt.Println("Size of the received State:", stateSize)
+			    bbytes, err := json.Marshal(rawbstate)
+			    if err != nil {
+				fmt.Println("Error Marshaling again the BeaconState")
+			    }
+			    bsreader := bytes.NewReader(bbytes)
+			    // With the spec.BeaconState() and the raw/plain BeaconState
                             // Import the received BeaconState from the Local Beacon Node
-                            state, err = beacon.AsBeaconStateView(c.GossipMetrics.TopicDatabase.Spec.BeaconState().Deserialize(codec.NewDecodingReader(bstate, uint64(stateSize))))
+                            state, err = beacon.AsBeaconStateView(c.GossipMetrics.TopicDatabase.Spec.BeaconState().Deserialize(codec.NewDecodingReader(bsreader, uint64(stateSize))))
                             if err != nil {
+				fmt.Println("Error generating the BeaconStateView", err)
                                 fmt.Errorf("%s",err)
                                 continue
-                            }
+                            } else {
+			    	fmt.Println("BeaconStateView acchieved: %+v", state)
+			    }
+			    fmt.Println("Storing the State on the DB")
                             _, err = stateDB.Store(ctx, state)
                             if err != nil {
-                                fmt.Errorf("%s", err)
+                                fmt.Println("Error Storing the State on the DB", err)
                                 continue
                             }
                             fmt.Println("State", sRoot.String(), "Has been Saved on the StatesDB")
@@ -150,29 +161,36 @@ func (c *GossipImportCmd) Run( ctx context.Context, args ...string) error {
 }
 
 // List of queries for the different clients that can be used to obtain the BeaconState
-var PrysmBSQuery string = "/eth/v1alpha1/debug/state/"
+// EXAMPLE:  "http://localhost:3500/eth/v1alpha1/debug/state?=2832"
+// 	      http://localhost:3500/eth/v1alpha1/debug/state?=468221
+var PrysmBSQuery string = "/eth/v1alpha1/debug/state?="
 
 func ComposePrysmBSRequest(ip string, port string, query string) string {
-    composedUrl := "https:" + ip + ":" + port + PrysmBSQuery
+    composedUrl := "http://" + ip + ":" + port + PrysmBSQuery
     return composedUrl
 }
 
-func RequestBeaconState(url string, root string) ([]byte, error) {
-    reqUrl := url + root
+func RequestBeaconState(url string, slot string) (beacon.BeaconState, error) {
+    reqUrl := url + slot
+    fmt.Println("Url:",reqUrl)
     resp, err := http.Get(reqUrl)
     if err != nil {
         fmt.Println("Error while getting the Beacon State from the local node, request:", reqUrl)
     }
+    fmt.Println("response:", resp)
     defer resp.Body.Close()
     bodyBytes, _ := ioutil.ReadAll(resp.Body)
     // Here I don't know if the BeaconState comes serialized or in a Json.
-//    var beaconState beacon.BeaconState
+    var beaconState beacon.BeaconState
     if len(bodyBytes) == 0 {
-        return bodyBytes, fmt.Errorf("Error Unmarshalling the response from the Local Beacon Node, response:", resp)
+        return beaconState, fmt.Errorf("Error Unmarshalling the response from the Local Beacon Node, response:", resp)
     }
-//    json.Unmarshal(bodyBytes, &beaconState)
-
-    return bodyBytes, nil
+    err = json.Unmarshal(bodyBytes, &beaconState)
+    if err != nil {
+	fmt.Println("Error unmarshalling the BeaconState received from the local node")
+    }
+    fmt.Println("BeaconState", slot , "successfully obtained from local node: %+v", beaconState)
+    return beaconState, nil
 }
 
 
